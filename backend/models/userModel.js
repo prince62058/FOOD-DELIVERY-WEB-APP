@@ -45,5 +45,5 @@ export const validateUser = (userdata) => {
   return schema.validate(userdata);
 };
 
-export const userModel = mongoose.model.user || mongoose.model("user", UserSchema);
+export const userModel = mongoose.model("user", UserSchema);
 export default userModel;
