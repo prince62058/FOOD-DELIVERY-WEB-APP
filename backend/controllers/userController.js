@@ -1,6 +1,6 @@
 import { GenerateWebTokenAndSaveCookie } from "../JWT/Token.js";
-import { validateUser } from "../models/userModel.js";
-import Users from '../models/userModel.js';
+import { validateUser } from "../models/usermodel.js";
+import usermodel from '../models/usermodel.js';
 import bcrypt from 'bcrypt';
 
 export const register = async (req, res) => {
@@ -15,7 +15,7 @@ export const register = async (req, res) => {
         const { name, email, password } = req.body;
 
         // Check if User already exists
-        const existingUser = await Users.findOne({ email });
+        const existingUser = await usermodel.findOne({ email });
         if (existingUser) {
             return res.status(400).json({ message: "User already exists" });
         }
@@ -24,7 +24,7 @@ export const register = async (req, res) => {
         const hashedPassword = await bcrypt.hash(password, 10);
 
         // Create a New User
-        const newUser = new Users({ name, email, password: hashedPassword });
+        const newUser = new usermodel({ name, email, password: hashedPassword });
         await newUser.save();
 
         if (newUser) {
@@ -47,7 +47,7 @@ export const Login = async (req, res) => {
       return res.status(400).json({ message: "All fields are required" });
     }
 
-    const user = await Users.findOne({ email }).select("+password");
+    const user = await usermodel.findOne({ email }).select("+password");
     if (!user) {
       return res.status(400).json({ message: "Invalid email or password" });
     }

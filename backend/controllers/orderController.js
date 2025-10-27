@@ -1,5 +1,5 @@
-import orderModel from '../models/orderModel.js';
-import userModel from '../models/userModel.js';
+import ordermodel from '../models/ordermodel.js';
+import usermodel from '../models/usermodel.js';
 import Stripe from "stripe";
 import dotenv from 'dotenv';
 dotenv.config();
@@ -10,7 +10,7 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 export const placeOrder = async (req, res) => {
   const frontend_url = "http://localhost:5173"
   try {
-    const newOrder = new orderModel({
+    const newOrder = new ordermodel({
       userId: req.body.userId,
       items: req.body.items,
       amount: req.body.amount,
@@ -18,7 +18,7 @@ export const placeOrder = async (req, res) => {
       paymentMethod: req.body.paymentMethod || "stripe",
     })
     await newOrder.save();
-    await userModel.findByIdAndUpdate(req.body.userId, { cartData: {} });
+    await usermodel.findByIdAndUpdate(req.body.userId, { cartData: {} });
 
     if (req.body.paymentMethod === "cod") {
       res.json({ success: true, message: "Order placed successfully with Cash on Delivery" })
@@ -66,11 +66,11 @@ export const verifyOrder = async (req, res) => {
   const { orderId, success } = req.body;
   try {
     if (success == "true") {
-      await orderModel.findByIdAndUpdate(orderId, { payment: true });
+      await ordermodel.findByIdAndUpdate(orderId, { payment: true });
       res.json({ success: true, message: "Paid" })
     }
     else {
-      await orderModel.findByIdAndDelete(orderId);
+      await ordermodel.findByIdAndDelete(orderId);
       res.json({ success: false, message: "Not Paid" })
     }
   } catch (error) {
@@ -82,7 +82,7 @@ export const verifyOrder = async (req, res) => {
 // user orders for frontend
 export const userOrders = async (req, res) => {
   try {
-    const orders = await orderModel.find({ userId: req.body.userId });
+    const orders = await ordermodel.find({ userId: req.body.userId });
     res.json({ success: true, data: orders })
   } catch (error) {
     console.log(error);
@@ -93,7 +93,7 @@ export const userOrders = async (req, res) => {
 //Listing orders for admin pannel
 export const listOrders = async(req,res)=>{
   try{
-    const orders = await orderModel.find({});
+    const orders = await ordermodel.find({});
     res.status(201).json({success :true,data:orders})
   }catch(error){
    console.log(error);
@@ -104,7 +104,7 @@ export const listOrders = async(req,res)=>{
 //Updating order status
 export const updateStatus = async(req,res)=>{
   try{
-    await orderModel.findByIdAndUpdate(req.body.orderId,{status:req.body.status});
+    await ordermodel.findByIdAndUpdate(req.body.orderId,{status:req.body.status});
     res.json({success:true,message:"Status Updated"})
   }catch(error){
     console.log(error);
@@ -115,14 +115,14 @@ export const updateStatus = async(req,res)=>{
 //Cancel order
 export const cancelOrder = async(req,res)=>{
   try{
-    const order = await orderModel.findById(req.body.orderId);
+    const order = await ordermodel.findById(req.body.orderId);
     if (!order) {
       return res.json({success:false,message:"Order not found"})
     }
     if (order.status !== "Food Processing") {
       return res.json({success:false,message:"Order cannot be canceled at this stage"})
     }
-    await orderModel.findByIdAndDelete(req.body.orderId);
+    await ordermodel.findByIdAndDelete(req.body.orderId);
     res.json({success:true,message:"Order Canceled"})
   }catch(error){
     console.log(error);

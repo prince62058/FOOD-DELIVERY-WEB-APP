@@ -1,6 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
+import mongoose from 'mongoose';
 import foodRouter from './routes/foodRoutes.js';
 import { connectDb } from './config/db.js';
 import useRouter from './routes/userRoute.js';
@@ -21,6 +22,9 @@ app.use(cors({
 
 // ✅ Database connection
 connectDb();
+
+// ✅ Set mongoose options
+mongoose.set('overwriteModels', true);
 
 // ✅ Serve static files
 app.use('/images', express.static('uploads'));

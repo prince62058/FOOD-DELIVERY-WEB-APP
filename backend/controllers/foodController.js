@@ -1,5 +1,5 @@
 import fs from 'fs';
-import foodModel from '../models/foodModel.js';
+import foodmodel from '../models/foodmodel.js';
 
 // ✅ Add food
 export const addFood = async (req, res) => {
@@ -11,7 +11,7 @@ export const addFood = async (req, res) => {
       return res.status(400).json({ success: false, message: "Image is required!" });
     }
 
-    const food = new foodModel({
+    const food = new foodmodel({
       name,
       description,
       price,
@@ -30,7 +30,7 @@ export const addFood = async (req, res) => {
 // ✅ List all foods
 export const listFood = async (req, res) => {
   try {
-    const foods = await foodModel.find({});
+    const foods = await foodmodel.find({});
     res.status(200).json({ success: true, data: foods, message: 'Food list fetched successfully' });
   } catch (error) {
     console.error('Error fetching food list:', error);
@@ -41,7 +41,7 @@ export const listFood = async (req, res) => {
 // ✅ Remove food
 export const removeFood = async (req, res) => {
   try {
-    const food = await foodModel.findById(req.body.id);
+    const food = await foodmodel.findById(req.body.id);
 
     if (!food) {
       return res.status(404).json({ success: false, message: "Food item not found!" });
@@ -54,7 +54,7 @@ export const removeFood = async (req, res) => {
     });
 
     // Delete food from database
-    await foodModel.findByIdAndDelete(req.body.id);
+    await foodmodel.findByIdAndDelete(req.body.id);
 
     res.status(200).json({ success: true, message: "Food item deleted successfully!" });
   } catch (error) {
